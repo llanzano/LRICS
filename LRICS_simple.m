@@ -49,7 +49,7 @@ T=size(M,3);
 prompt = {'Mask Size (13,17,21,25,29,33)','Pixel Time (us)','D scale in um2/s(Dmin Dmax)','Gauss Filter (px)'};
 dlg_title = 'Input parameters'; 
 num_lines = 1;
-def = {'25','50','0 100','2'};
+def = {'13','50','0 100','2'};
 inputdata = inputdlg(prompt,dlg_title,num_lines,def);
 
 MaskS=str2num(inputdata{1});
@@ -60,9 +60,10 @@ GaussAverage=str2num(inputdata{4});
 
 path1=which('Param_Cal_6_2_16.mat');
 load(path1);
-mask_inp=round(MaskS-1);
+mask_inp=round((MaskS-1)/2);
 [val,idx]=min(abs(mask_vect-mask_inp));
 mask=mask_vect(idx);
+inputdata{1}=2*mask+1;
 ColorScale=round(ColorScale);
 TimeAverage=0;
 Frame_Vect=0;
@@ -89,7 +90,7 @@ A1=double(D_map);
 MaxValImg=ColorScale(2);
 MinValImg=ColorScale(1);
 Aout=(A1-MinValImg)/(MaxValImg-MinValImg);
-outputFileName = [filenamefull(1:end-4), '_D_min',num2str(MinValImg,2),'max',num2str(MaxValImg),'.tif'];
+outputFileName = [filenamefull(1:end-4), '_Dmap_min',num2str(MinValImg,2),'max',num2str(MaxValImg),'.tif'];
 delete outputFileName ;
 imwrite(Aout, outputFileName);
 end
@@ -521,18 +522,18 @@ for i=1:X
     end
     P=round(T1*(X-i));
     if P>3600
-            fprintf(strcat('Processing...',num2str(round((i)/(X)*100)),'/100, Elapsed time=',num2str(round(P/3600)),'hour(s)'))
+            fprintf(strcat('Processing...',num2str(round((i)/(X)*100)),'/100, Remaining time=',num2str(round(P/3600)),'hour(s)'))
             fprintf('\n')
     else
         if P>60
-            fprintf(strcat('Processing...',num2str(round((i)/(X)*100)),'/100, Elapsed time=',num2str(round(P/60)),'min'))
+            fprintf(strcat('Processing...',num2str(round((i)/(X)*100)),'/100, Remaining time=',num2str(round(P/60)),'min'))
             fprintf('\n')
         else
             if P<0
-            fprintf(strcat('Processing...',num2str(round((i)/(X)*100)),'/100, Elapsed time=0s'))
+            fprintf(strcat('Processing...',num2str(round((i)/(X)*100)),'/100, Remaining time=0s'))
             fprintf('\n')
             else
-            fprintf(strcat('Processing...',num2str(round((i)/(X)*100)),'/100, Elapsed time=',num2str(P),'s'))
+            fprintf(strcat('Processing...',num2str(round((i)/(X)*100)),'/100, Remaining time=',num2str(P),'s'))
             fprintf('\n')
             end
         end
